@@ -1,8 +1,8 @@
 # Avance 1 — CampusCare: modelado de amenazas y diseño seguro
 
 **Curso:** Ciberseguridad Aplicada · Unidad 1
-**Equipo:** `Code Gazers` — integrantes: `Robert Stewart Teaze Legleu`, `<NOMBRE_2>`, `<NOMBRE_3>`
-**Repositorio:** `<URL_DEL_REPOSITORIO>`
+**Equipo:** `Code Gazers` — integrantes: `Robert Stewart Teaze Legleu`, `Edgar Acevedo`, `Fernando Garces`
+**Repositorio:** `https://github.com/RobertTSL/Campus-Care_CodeGazers.git`
 **Commit analizado:** `<HASH_DEL_COMMIT>`
 **Pull Request revisado:** `<URL_DEL_PR>`
 
@@ -20,13 +20,13 @@
 
 - **Qué podría pasar:** cualquier usuario autenticado —sin importar su rol— puede listar **todos** los tickets del sistema y leer o modificar el ticket de **otro** estudiante por su `id`, incluyendo tickets marcados `privateNote` (por ejemplo el de apoyo psicológico de `lopez`). El `PATCH` además acepta un `Map<String,Object>` genérico que permite cambiar el campo `owner`, reasignando el ticket a otra persona.
 - **Evidencia:** `src/main/java/mx/edu/campuscare/tickets/TicketController.java` línea 7 (`GET /api/tickets` sin filtrar por dueño/rol), línea 8 (`GET /api/tickets/{id}` sin verificar propiedad — BOLA) y líneas 10–11 (`PATCH /api/tickets/{id}` con *binding* permisivo sobre `owner` y `privateNote`). La prueba `studentCannotReadAnotherUsersTicket` en `CampusCareApplicationTests.java` (línea 10) está deshabilitada explícitamente hasta corregir este gap, lo que confirma que es un riesgo conocido y no accidental.
-- **Control propuesto:** aplicar control de acceso por propiedad y rol antes de tocar la entidad: filtrar `findAll()` por `owner == authentication.getName()` salvo rol `SUPPORT`/`ADMIN`, y validar en `one()`/`patch()` que el solicitante es dueño del ticket o tiene rol de soporte (`@PreAuthorize` o verificación explícita en el servicio). Sustituir el `Map<String,Object>` del `PATCH` por un DTO que sólo exponga los campos editables según el rol (p. ej. un estudiante no debería poder cambiar `owner` ni `privateNote`).
+- **Control propuesto:** aplicar control de acceso por propiedad y rol antes de tocar la entidad: filtrar `findAll()` por `owner == authentication.getName()` salvo rol `SUPPORT`/`ADMIN`, y validar en `one()`/`patch()` que el solicitante es dueño del ticket o tiene rol de soporte (`@PreAuthorize` o verificación explícita en el servicio). Sustituir el `Map<String,Object>` del `PATCH` por un DTO que sólo exponga los campos editables según el rol (por ejemplo un estudiante no debería poder cambiar `owner` ni `privateNote`).
 
 ### Amenaza 3 — Tampering: XSS reflejado en la vista previa de comentarios
 
-- **Qué podría pasar:** el endpoint de vista previa concatena el parámetro `text` directamente dentro de HTML sin escapar, y está marcado `permitAll` (no requiere autenticación). Un atacante puede construir una URL con un `<script>` en `text` y compartirla; si un agente o administrador la abre en una sesión donde el navegador ya guardó las credenciales de Basic Auth, el script corre en el origen de CampusCare y puede reenviar solicitudes autenticadas en su nombre.
-- **Evidencia:** `src/main/java/mx/edu/campuscare/comments/CommentController.java` línea 4 (`"<article>...<p>"+text+"</p></article>"`); la ruta está listada en `permitAll()` dentro de `SecurityConfig.java` línea 4. La prueba `xssTrainingGapIsReproducible` en `CampusCareApplicationTests.java` línea 9 reproduce el hallazgo.
-- **Control propuesto:** dejar de construir HTML por concatenación de cadenas; usar una plantilla Thymeleaf (ya está en el `pom.xml`) con escape automático (`th:text`), o al menos codificar el texto con un *encoder* (p. ej. OWASP Java Encoder) antes de insertarlo. Complementar con una CSP más estricta que la actual (`'unsafe-inline'` en `default-src` la debilita).
+- **Qué podría pasar:** el endpoint de vista previa concatena el parámetro `text` directamente dentro de HTML sin escapar, y está marcado `permitAll` (no requiere autenticación). Un atacante puede construir una URL con un `<script>` en `text` y compartirla, y si un agente o administrador la abre en una sesión donde el navegador ya guardó las credenciales de Basic Auth, el script corre en el origen de CampusCare y puede reenviar solicitudes autenticadas en su nombre.
+- **Evidencia:** `src/main/java/mx/edu/campuscare/comments/CommentController.java` línea 4 (`"<article>...<p>"+text+"</p></article>"`), la ruta está listada en `permitAll()` dentro de `SecurityConfig.java` en la línea 4. La prueba `xssTrainingGapIsReproducible` en `CampusCareApplicationTests.java` en la línea 9 reproduce el hallazgo.
+- **Control propuesto:** dejar de construir HTML por concatenación de cadenas y usar una plantilla Thymeleaf (ya está en el `pom.xml`) con escape automático (`th:text`), o al menos codificar el texto con un *encoder* (como OWASP Java Encoder) antes de insertarlo. Complementar con una CSP más estricta que la actual.
 
 ## 2. Diagrama del sistema
 
@@ -80,4 +80,4 @@ Entre los actores externos y los datos hay una sola capa de control real (el `Se
 | 2. IDOR/BOLA en tickets | Habilitar y pasar `studentCannotReadAnotherUsersTicket` (`GET /api/tickets/2` con credenciales de `rivera`) y agregar caso equivalente para `PATCH` intentando cambiar `owner` | `403 Forbidden` en ambos casos; `agente`/`admin` sí pueden acceder | Avance/Unidad 3 (ya referenciado en el propio starter) | `<NOMBRE>` |
 | 3. XSS reflejado en preview | Repetir `xssTrainingGapIsReproducible` pero afirmando que la respuesta **no** contiene `<script>` sin escapar, sino la entidad HTML codificada | El `<script>` aparece codificado (`&lt;script&gt;`) y no se ejecuta en el navegador | Avance/Unidad 2 | `<NOMBRE>` |
 
-**Declaración de uso de IA:** este avance se elaboró con apoyo de un asistente de IA para redactar el análisis STRIDE y el diagrama a partir del código real del starter (`SecurityConfig.java`, `TicketController.java`, `CommentController.java`, `PreviewController.java`, `CampusCareApplicationTests.java`). El equipo verificó cada hallazgo ejecutando `./mvnw test` sobre el baseline y revisando manualmente las líneas citadas antes de aceptarlas; los datos del equipo, el PR y el commit fueron completados por las personas integrantes, no generados por IA.
+**Declaración de uso de IA:** este avance se elaboró con apoyo de un asistente de IA para redactar el análisis STRIDE y el diagrama a partir del código real del starter (`SecurityConfig.java`, `TicketController.java`, `CommentController.java`, `PreviewController.java`, `CampusCareApplicationTests.java`). El equipo verificó cada hallazgo ejecutando `./mvnw test` sobre el baseline y revisando manualmente las líneas citadas antes de aceptarlas. Los datos del equipo, el PR y el commit fueron completados por las personas que integran el equipo.
