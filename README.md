@@ -12,7 +12,7 @@ Baseline de Ciberseguridad Aplicada en Java 21 y Spring Boot 3. Incluye API HTTP
 
 ## Equipo
 
-- Líder inicial: NOMBRE
+- Líder inicial: Robert Stewart Teaze Legleu
 - Responsable de evidencia: NOMBRE
 - Responsable de calidad: NOMBRE
 - Integrante adicional: NOMBRE (si aplica)
