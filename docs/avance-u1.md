@@ -3,8 +3,8 @@
 **Curso:** Ciberseguridad Aplicada · Unidad 1
 **Equipo:** `Code Gazers` — integrantes: `Robert Stewart Teaze Legleu`, `Edgar Acevedo`, `Fernando Garces`
 **Repositorio:** `https://github.com/RobertTSL/Campus-Care_CodeGazers.git`
-**Commit analizado:** `<HASH_DEL_COMMIT>`
-**Pull Request revisado:** `<URL_DEL_PR>`
+**Commit analizado:** `9ec56b9`
+**Pull Request revisado:** `https://github.com/RobertTSL/Campus-Care_CodeGazers/pull/1`
 
 > Reemplacen los campos entre `<>` antes de entregar. Este avance analiza el baseline `campuscare-java-starter` tal como se recibió, sin modificarlo todavía; los `TRAINING GAP` marcados en el código son las vulnerabilidades intencionales que sustentan el análisis.
 
