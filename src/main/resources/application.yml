@@ -1,0 +1,16 @@
+spring:
+  datasource:
+    url: jdbc:h2:file:./data/campuscare
+    username: sa
+    password:
+  jpa:
+    hibernate:
+      ddl-auto: update
+  h2:
+    console:
+      enabled: false
+server:
+  error:
+    include-stacktrace: never
+campuscare:
+  demo-secret: ${CAMPUSCARE_DEMO_SECRET:training-only-not-a-real-secret}
