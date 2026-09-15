@@ -9,7 +9,7 @@
 
 ## 1. Amenazas (STRIDE)
 
-### Amenaza 1 — Spoofing: identidad de laboratorio trivialmente suplantable
+### Amenaza 1 — Spoofing: identidad suplantable
 
 - **Qué podría pasar:** los cuatro usuarios (`rivera`, `lopez`, `agente`, `admin`) comparten la misma contraseña (`demo123`) y las credenciales se validan con `NoOpPasswordEncoder`, es decir, en texto plano y sin costo computacional. Cualquiera que conozca o adivine un usuario puede autenticarse como él —incluido el rol `ADMIN`— sin necesitar la contraseña real de esa persona, ni límite de intentos ni segundo factor.
 - **Evidencia:** `src/main/java/mx/edu/campuscare/config/SecurityConfig.java`, línea 5 (todas las cuentas con `.password("demo123")`) y línea 6 (`NoOpPasswordEncoder`).
