@@ -6,7 +6,6 @@
 **Commit analizado:** `9ec56b9`
 **Pull Request revisado:** `https://github.com/RobertTSL/Campus-Care_CodeGazers/pull/1`
 
-> Reemplacen los campos entre `<>` antes de entregar. Este avance analiza el baseline `campuscare-java-starter` tal como se recibió, sin modificarlo todavía; los `TRAINING GAP` marcados en el código son las vulnerabilidades intencionales que sustentan el análisis.
 
 ## 1. Amenazas (STRIDE)
 
