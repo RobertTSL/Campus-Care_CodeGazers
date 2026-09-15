@@ -14,7 +14,7 @@ Baseline de Ciberseguridad Aplicada en Java 21 y Spring Boot 3. Incluye API HTTP
 
 - Líder inicial: Robert Stewart Teaze Legleu
 - Responsable de evidencia: NOMBRE
-- Responsable de calidad: NOMBRE
+- Responsable de calidad: Edgar Arturo Acevedo Acosta
 - Integrante adicional: NOMBRE (si aplica)
 
 No publiques matrículas, correos o teléfonos. Los roles rotan por unidad.
